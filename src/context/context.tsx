@@ -1,6 +1,6 @@
 import React, { createContext, useMemo, useState } from "react";
 
-interface QuizData {
+export interface QuizData {
   category: string;
   correct_answer: string;
   incorrect_answers: string[];

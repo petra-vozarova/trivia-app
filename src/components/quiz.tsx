@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { QuizDataContext } from "../context/context";
-import Button from "@mui/material/Button";
 import {
   Divider,
   FormControl,
@@ -8,9 +7,11 @@ import {
   FormHelperText,
   Radio,
   RadioGroup,
-  Stack,
+  Button,
   Box,
 } from "@mui/material";
+import QuizResults from "./quiz-results";
+import { shuffleArray } from "../utils/utils";
 
 const Quiz = () => {
   const [score, setScore] = useState(0);
@@ -25,13 +26,6 @@ const Quiz = () => {
     quizData[currentQuestion];
 
   let answers = [correct_answer, ...incorrect_answers];
-  function shuffleArray(array: string[]) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
 
   useEffect(() => {
     answers = shuffleArray(answers);
@@ -71,18 +65,21 @@ const Quiz = () => {
   };
 
   console.log("quiz component rerenders");
+
   return (
     <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
       {finished ? (
-        <div>
-          <h1>Quiz Finished!</h1>
-          <h2>
-            You score is: {score} / {quizData.length}
-          </h2>
-        </div>
+        <QuizResults score={score} />
       ) : (
         <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
-          <h2 style={{ fontSize: "25px" }}>{question}</h2>
+          <h2
+            style={{
+              fontSize: "25px", 
+              maxWidth: "70%",
+            }}
+          >
+            {question}
+          </h2>
           <FormControl sx={{ fontWeight: "bold" }}>
             <RadioGroup value={showCorrectAnswer ? correct_answer : answer}>
               {answers.map((currentAnswer, index) => (
@@ -120,7 +117,7 @@ const Quiz = () => {
               disabled={answer === "" ? true : false}
               sx={{ marginTop: "15px" }}
             >
-              {showCorrectAnswer ? "Next Question" : "Submit Answer"}
+              {showCorrectAnswer ? "Next" : "Submit Answer"}
             </Button>
           </FormControl>
         </Box>
