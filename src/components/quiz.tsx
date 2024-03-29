@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import QuizResults from "./quiz-results";
 import { shuffleArray } from "../utils/utils";
+import CountDown from "./count-down";
 
 const Quiz = () => {
   const [score, setScore] = useState(0);
@@ -20,6 +21,7 @@ const Quiz = () => {
   const [finished, setFinished] = useState(false);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
   const [helperText, setHelperText] = useState("Choose wisely");
+  const [isTimeUp, setIsTimeUp] = useState(false);
 
   const { quizData } = useContext(QuizDataContext);
   const { question, correct_answer, type, incorrect_answers } =
@@ -50,7 +52,8 @@ const Quiz = () => {
     }
   };
 
-  const handleButtonClick = () => {
+  const handleAnswer = () => {
+    console.log(answer);
     if (showCorrectAnswer) {
       displayNextQuestion();
       setShowCorrectAnswer(false);
@@ -64,6 +67,11 @@ const Quiz = () => {
     setAnswer(event.target.value);
   };
 
+  const handleCountDownFinish = () => {
+    setIsTimeUp(true);
+    handleAnswer();
+  };
+
   console.log("quiz component rerenders");
 
   return (
@@ -72,9 +80,13 @@ const Quiz = () => {
         <QuizResults score={score} />
       ) : (
         <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
+          <CountDown
+            start={!showCorrectAnswer}
+            onFinish={handleCountDownFinish}
+          />
           <h2
             style={{
-              fontSize: "25px", 
+              fontSize: "25px",
               maxWidth: "70%",
             }}
           >
@@ -113,8 +125,8 @@ const Quiz = () => {
 
             <Button
               variant="contained"
-              onClick={handleButtonClick}
-              disabled={answer === "" ? true : false}
+              onClick={()=> handleAnswer()}
+              disabled={answer === "" && !showCorrectAnswer ? true : false}
               sx={{ marginTop: "15px" }}
             >
               {showCorrectAnswer ? "Next" : "Submit Answer"}
