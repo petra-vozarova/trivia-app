@@ -51,7 +51,6 @@ const CountDown = ({
     }
   }, [start]);
 
-  console.log("countdown rerenders");
 
 return (
     <div>

@@ -19,7 +19,6 @@ export const QuizDataProvider: React.FC<{ children: React.ReactNode }> = ({
   const [quizData, setQuizData] = useState<QuizData[]>([]);
   const value = useMemo(() => ({ quizData, setQuizData }), [quizData]);
 
-  console.log("context rerenders");
   return (
     <QuizDataContext.Provider value={value}>
       {children}

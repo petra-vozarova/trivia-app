@@ -9,10 +9,12 @@ import {
   RadioGroup,
   Button,
   Box,
+  RadioProps,
 } from "@mui/material";
 import QuizResults from "./quiz-results";
 import { shuffleArray } from "../utils/utils";
 import CountDown from "./count-down";
+import { get } from "http";
 
 const Quiz = () => {
   const [score, setScore] = useState(0);
@@ -53,7 +55,6 @@ const Quiz = () => {
   };
 
   const handleAnswer = () => {
-    console.log(answer);
     if (showCorrectAnswer) {
       displayNextQuestion();
       setShowCorrectAnswer(false);
@@ -72,7 +73,27 @@ const Quiz = () => {
     handleAnswer();
   };
 
-  console.log("quiz component rerenders");
+  function getColor(currentAnswer: string) {
+    let colors: { [key: string]: string | RadioProps["color"] } = {
+      radio: "primary",
+      text: "white",
+      decoration: "none",
+    };
+    if (showCorrectAnswer) {
+      if (
+        correct_answer === currentAnswer ||
+        (correct_answer === currentAnswer && correct_answer === answer)
+      ) {
+        colors["radio"] = "success";
+        colors["text"] = "green";
+      } else if (answer === currentAnswer && answer !== correct_answer) {
+        colors["text"] = "red";
+        colors["decoration"]= "line-through";
+      }
+    }
+    return colors;
+  }
+
 
   return (
     <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
@@ -97,6 +118,7 @@ const Quiz = () => {
               {answers.map((currentAnswer, index) => (
                 <>
                   <FormControlLabel
+                    sx={{ color: getColor(currentAnswer).text, textDecoration: getColor(currentAnswer).decoration }}
                     key={index}
                     value={currentAnswer}
                     control={
@@ -107,9 +129,7 @@ const Quiz = () => {
                         sx={{ padding: 2 }}
                         onChange={handleChange}
                         color={
-                          showCorrectAnswer && correct_answer === currentAnswer
-                            ? "secondary"
-                            : "primary"
+                          getColor(currentAnswer).radio as RadioProps["color"]
                         }
                       />
                     }
@@ -125,7 +145,7 @@ const Quiz = () => {
 
             <Button
               variant="contained"
-              onClick={()=> handleAnswer()}
+              onClick={() => handleAnswer()}
               disabled={answer === "" && !showCorrectAnswer ? true : false}
               sx={{ marginTop: "15px" }}
             >
